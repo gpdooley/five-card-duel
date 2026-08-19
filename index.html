@@ -7,419 +7,478 @@
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: #1b263b;
-      color: #e0e1dd;
+      font-family: Arial, sans-serif;
+      background-color: #1b5e20;
+      color: white;
       display: flex;
-      flex-direction: column;
-      align-items: center;
       justify-content: center;
+      align-items: center;
       min-height: 100vh;
-      padding: 15px;
+      padding: 10px;
     }
-    #game-container {
-      width: 100%;
-      max-width: 900px;
-      background-color: #0d1b2a;
+    .container {
+      background: #2e7d32;
       border-radius: 12px;
       padding: 20px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.6);
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-    }
-    header {
+      max-width: 800px;
+      width: 100%;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.3);
       text-align: center;
-      border-bottom: 2px solid #415a77;
-      padding-bottom: 10px;
     }
-    h1 { font-size: 2.2rem; color: #e0e1dd; }
-    .status-bar {
-      text-align: center;
-      font-size: 1.2rem;
+    h1 { font-size: 2.2rem; margin-bottom: 20px; text-shadow: 1px 1px 3px rgba(0,0,0,0.5); }
+    .btn {
+      background-color: #e0e0e0;
+      color: #333;
+      border: none;
+      padding: 12px 24px;
+      margin: 8px;
+      font-size: 1rem;
       font-weight: bold;
-      color: #778da9;
-      min-height: 1.6em;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
     }
-    .score-board {
-      display: flex;
-      justify-content: space-around;
-      background-color: #1b263b;
-      padding: 12px;
+    .btn:hover { background-color: #ffffff; transform: translateY(-2px); }
+    .btn:active { transform: translateY(0); }
+    
+    .hand-container {
+      background: rgba(0, 0, 0, 0.15);
       border-radius: 8px;
-      font-size: 1.1rem;
-    }
-    .play-area {
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-    }
-    .player-section {
-      background-color: #1b263b;
       padding: 15px;
-      border-radius: 8px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 10px;
-      border: 2px solid transparent;
-      transition: border-color 0.3s;
+      margin: 15px 0;
     }
-    .player-section.active {
-      border-color: #778da9;
-    }
-    .card-row {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      justify-content: center;
-      min-height: 110px;
-    }
+    .hand-label { font-size: 1.1rem; font-weight: bold; margin-bottom: 8px; text-align: left; }
+    .card-row { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; min-height: 110px; }
+    
+    /* Card Styling */
     .card {
       width: 70px;
       height: 100px;
-      background-color: #ffffff;
-      color: #000000;
+      background: white;
       border-radius: 6px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
       padding: 6px;
       font-weight: bold;
-      font-size: 1.1rem;
-      cursor: pointer;
+      box-shadow: 2px 2px 5px rgba(0,0,0,0.3);
       user-select: none;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-      transition: transform 0.2s, box-shadow 0.2s;
+      position: relative;
     }
-    .card:hover:not(.disabled) {
-      transform: translateY(-5px);
-      box-shadow: 0 6px 12px rgba(0,0,0,0.4);
-    }
-    .card.red { color: #d62828; }
-    .card.back {
-      background: linear-gradient(135deg, #415a77, #1b263b);
-      border: 2px solid #e0e1dd;
-      cursor: default;
-    }
-    .card.disabled {
-      cursor: default;
-      opacity: 0.8;
-    }
-    .card.selected {
-      border: 3px solid #f2e9e1;
-      transform: translateY(-8px);
-    }
-    .controls {
-      display: flex;
-      justify-content: center;
-      gap: 15px;
-      flex-wrap: wrap;
-    }
-    .btn {
-      background-color: #415a77;
-      color: #e0e1dd;
-      border: none;
-      padding: 10px 20px;
-      font-size: 1rem;
-      font-weight: bold;
-      border-radius: 6px;
-      cursor: pointer;
-      transition: background-color 0.2s;
-    }
-    .btn:hover { background-color: #778da9; }
-    .btn-primary { background-color: #e0e1dd; color: #0d1b2a; }
-    .btn-primary:hover { background-color: #ffffff; }
+    .card.red { color: #d32f2f; }
+    .card.black { color: #212121; }
+    .card-corner { font-size: 0.9rem; line-height: 1; text-align: left; }
+    .card-center { font-size: 1.8rem; align-self: center; }
+    
+    .selectable { cursor: pointer; border: 2px solid #ffd54f; }
+    .selectable:hover { transform: translateY(-5px); box-shadow: 2px 6px 10px rgba(0,0,0,0.4); }
 
-    /* Overlay Screens */
-    .overlay {
-      position: fixed;
-      top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(13, 27, 42, 0.95);
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      gap: 20px;
-      z-index: 100;
+    .rules-box {
+      text-align: left;
+      background: rgba(0,0,0,0.2);
+      padding: 15px;
+      border-radius: 8px;
+      max-height: 350px;
+      overflow-y: auto;
+      margin-bottom: 15px;
+      font-size: 0.95rem;
+      line-height: 1.5;
     }
-    .overlay h2 { font-size: 2.5rem; }
+    .footer { margin-top: 20px; font-size: 0.85rem; opacity: 0.8; }
+    .status-text { font-size: 1.2rem; font-weight: bold; color: #ffd54f; margin: 10px 0; }
   </style>
 </head>
 <body>
 
-<div id="game-container">
-  <header>
-    <h1>Five Card Duel</h1>
-  </header>
-
-  <div class="score-board">
-    <div id="p1-score-label">Player 1: <span id="p1-score">0</span></div>
-    <div id="p2-score-label">Player 2: <span id="p2-score">0</span></div>
+<div class="container">
+  <h1>Five Card Duel</h1>
+  
+  <!-- Main Menu View -->
+  <div id="view-menu">
+    <button class="btn" onclick="startSinglePlayer()">Single Player</button><br>
+    <button class="btn" onclick="startTwoPlayer()">Two Players</button><br>
+    <button class="btn" onclick="showRules()">Rules</button>
   </div>
 
-  <div class="status-bar" id="status-display">Select a mode to start playing!</div>
+  <!-- Rules View -->
+  <div id="view-rules" style="display:none;">
+    <div class="rules-box">
+      <h3>Objective</h3>
+      <p>Build the best 5-card poker hand.</p><br>
+      <h3>Game Play</h3>
+      <p>• Played in Single Player or Two Player mode.</p>
+      <p>• Each round, 5 cards are dealt face-up.</p>
+      <p>• Players take turns picking 1 card at a time.</p>
+      <p>• In rounds 1–3, Player 1 picks first. In rounds 4–5, Player 2/Computer picks first.</p>
+      <p>• Unchosen cards are discarded at the end of each round.</p><br>
+      <h3>Poker Hand Rankings</h3>
+      <p>1. Royal Flush | 2. Straight Flush | 3. Four of a Kind | 4. Full House | 5. Flush | 6. Straight | 7. Three of a Kind | 8. Two Pair | 9. One Pair | 10. High Card</p>
+    </div>
+    <button class="btn" onclick="showMenu()">Back to Main Menu</button>
+  </div>
 
-  <div class="play-area">
-    <!-- Player 2 / Computer Area -->
-    <div class="player-section" id="p2-area">
-      <h3 id="p2-name">Player 2</h3>
+  <!-- Game View -->
+  <div id="view-game" style="display:none;">
+    <div id="round-title" class="status-text">Round 1</div>
+    <div id="instruction" class="status-text">Select a card</div>
+
+    <div class="hand-container">
+      <div class="hand-label" id="p1-label">Player 1:</div>
+      <div class="card-row" id="p1-hand"></div>
+    </div>
+
+    <div class="hand-container">
+      <div class="hand-label" id="p2-label">Computer:</div>
       <div class="card-row" id="p2-hand"></div>
     </div>
 
-    <!-- Battle Center Area -->
-    <div class="player-section" style="background-color: #0d1b2a;">
-      <div class="card-row">
-        <div id="p1-played-card"></div>
-        <div id="p2-played-card"></div>
-      </div>
-    </div>
-
-    <!-- Player 1 Area -->
-    <div class="player-section" id="p1-area">
-      <h3>Player 1</h3>
-      <div class="card-row" id="p1-hand"></div>
+    <div class="hand-container" id="pool-container">
+      <div class="hand-label">Available Cards:</div>
+      <div class="card-row" id="card-pool"></div>
     </div>
   </div>
 
-  <div class="controls">
+  <!-- Game Over View -->
+  <div id="view-results" style="display:none;">
+    <div id="winner-announcement" class="status-text" style="font-size: 1.8rem;"></div>
+    
+    <div class="hand-container">
+      <div class="hand-label" id="res-p1-label">Player 1</div>
+      <div class="card-row" id="res-p1-hand"></div>
+      <div id="p1-hand-type" style="margin-top:5px; font-weight:bold;"></div>
+    </div>
+
+    <div class="hand-container">
+      <div class="hand-label" id="res-p2-label">Player 2</div>
+      <div class="card-row" id="res-p2-hand"></div>
+      <div id="p2-hand-type" style="margin-top:5px; font-weight:bold;"></div>
+    </div>
+
+    <button class="btn" onclick="restartGame()">Play Again</button>
     <button class="btn" onclick="showMenu()">Main Menu</button>
   </div>
-</div>
 
-<!-- Main Menu Overlay -->
-<div id="menu-overlay" class="overlay">
-  <h2>Five Card Duel</h2>
-  <div style="display: flex; gap: 15px;">
-    <button class="btn btn-primary" onclick="startGame('single')">Single Player (vs CPU)</button>
-    <button class="btn btn-primary" onclick="startGame('two')">Two Player (Local)</button>
-  </div>
+  <div class="footer">© Garrett Dooley, 2024</div>
 </div>
 
 <script>
-  const suits = ['♠', '♥', '♦', '♣'];
-  const values = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]; // 11: J, 12: Q, 13: K, 14: A
+  // --- Game Engine State ---
+  const handRanks = {
+    "High Card": 0, "One Pair": 1, "Two Pair": 2, "Three of a Kind": 3,
+    "Straight": 4, "Flush": 5, "Full House": 6, "Four of a Kind": 7,
+    "Straight Flush": 8, "Royal Flush": 9
+  };
 
-  let deck = [];
-  let p1Hand = [];
-  let p2Hand = [];
-  let p1Played = null;
-  let p2Played = null;
-  let p1Score = 0;
-  let p2Score = 0;
-  let gameMode = 'single'; // 'single' or 'two'
-  let currentPlayer = 1; // 1 or 2
-  let roundsPlayed = 0;
+  const suits = ["hearts", "diamonds", "clubs", "spades"];
+  const suitSymbols = { "hearts": "♥", "diamonds": "♦", "clubs": "♣", "spades": "♠" };
+  const valueNames = { 11: "J", 12: "Q", 13: "K", 14: "A" };
+  const fullNameMap = { 11: "Jack", 12: "Queen", 13: "King", 14: "Ace" };
 
+  let isSinglePlayer = true;
+  let deck = [], p1Hand = [], p2Hand = [], remainingCards = [], currentPool = [];
+  let roundNum = 1, currentTurn = 1, playerStarts = true, initialTurn = 1;
+
+  // Navigation
+  function hideAllViews() {
+    ['view-menu', 'view-rules', 'view-game', 'view-results'].forEach(id => {
+      document.getElementById(id).style.display = 'none';
+    });
+  }
+  function showMenu() { hideAllViews(); document.getElementById('view-menu').style.display = 'block'; }
+  function showRules() { hideAllViews(); document.getElementById('view-rules').style.display = 'block'; }
+
+  // Hand Evaluation Logic
+  function evaluateHand(hand) {
+    let values = hand.map(c => c.value).sort((a,b) => b - a);
+    let handSuits = hand.map(c => c.suit);
+    
+    let isFlush = new Set(handSuits).size === 1;
+    let isStraight = values.every((val, i) => i === 0 || values[i - 1] - 1 === val);
+    
+    // Count occurrences
+    let counts = {};
+    values.forEach(v => counts[v] = (counts[v] || 0) + 1);
+    let sortedCounts = Object.entries(counts)
+      .map(([val, cnt]) => ({ value: Number(val), count: cnt }))
+      .sort((a, b) => b.count - a.count || b.value - a.value);
+
+    if (isStraight && isFlush) {
+      return { rank: values[0] === 14 ? 9 : 8, values, name: values[0] === 14 ? "Royal Flush" : "Straight Flush" };
+    }
+    if (sortedCounts[0].count === 4) return { rank: 7, values, name: "Four of a Kind" };
+    if (sortedCounts[0].count === 3 && sortedCounts[1]?.count === 2) return { rank: 6, values, name: "Full House" };
+    if (isFlush) return { rank: 5, values, name: "Flush" };
+    if (isStraight) return { rank: 4, values, name: "Straight" };
+    if (sortedCounts[0].count === 3) return { rank: 3, values, name: "Three of a Kind" };
+    if (sortedCounts[0].count === 2 && sortedCounts[1]?.count === 2) return { rank: 2, values, name: "Two Pair" };
+    if (sortedCounts[0].count === 2) return { rank: 1, values, name: "One Pair" };
+    return { rank: 0, values, name: "High Card" };
+  }
+
+  function getSpecificHandName(evaluation, hand) {
+    let { rank } = evaluation;
+    let values = hand.map(c => c.value);
+    let counts = {};
+    values.forEach(v => counts[v] = (counts[v] || 0) + 1);
+    let sortedCounts = Object.entries(counts)
+      .map(([val, cnt]) => ({ value: Number(val), count: cnt }))
+      .sort((a, b) => b.count - a.count || b.value - a.value);
+    
+    let high = fullNameMap[Math.max(...values)] || Math.max(...values);
+    let primary = fullNameMap[sortedCounts[0]?.value] || sortedCounts[0]?.value;
+    let secondary = fullNameMap[sortedCounts[1]?.value] || sortedCounts[1]?.value;
+
+    if (rank === 1) return `One Pair (${primary}s)`;
+    if (rank === 2) return `Two Pair (${primary}s and ${secondary}s)`;
+    if (rank === 3) return `Three of a Kind (${primary}s)`;
+    if (rank === 4) return `Straight (${high} High)`;
+    if (rank === 5) return `Flush (${high} High)`;
+    if (rank === 6) return `Full House (${primary}s full of ${secondary}s)`;
+    if (rank === 7) return `Four of a Kind (${primary}s)`;
+    if (rank === 8) return `Straight Flush (${high} High)`;
+    if (rank === 9) return "Royal Flush";
+    return `High Card (${high})`;
+  }
+
+  // --- Computer AI Logic ---
+  function getRemainingCount(val) {
+    return remainingCards.filter(c => c.value === val).length;
+  }
+
+  function computerPickCard(compHand, playHand, availableCards, round, compPicksFirst) {
+    const findBest = (cards, cond) => {
+      let filtered = cards.filter(cond);
+      return filtered.length ? filtered.reduce((max, c) => c.value > max.value ? c : max) : null;
+    };
+
+    const blockHigherPair = () => {
+      let oppMax = Math.max(...playHand.map(c => c.value), -1);
+      return availableCards.find(c => c.value > oppMax && getRemainingCount(c.value) >= 2) || null;
+    };
+
+    const pickMatch = (card) => availableCards.find(c => c.value === card.value) || null;
+    const pickSuit = (card) => findBest(availableCards, c => c.suit === card.suit);
+    const pickStraight = (card) => findBest(availableCards, c => Math.abs(c.value - card.value) === 1);
+    const pickHighestWithMatches = () => findBest(availableCards, c => getRemainingCount(c.value) >= 3);
+    const pickHighest = () => availableCards.reduce((max, c) => c.value > max.value ? c : max);
+
+    const upgradePriority = () => {
+      for (let card of compHand) {
+        let match = pickMatch(card);
+        if (match) return match;
+      }
+      return null;
+    };
+
+    let best = null;
+    if (round === 1) {
+      best = pickHighestWithMatches() || pickHighest();
+    } else if (round === 2) {
+      if (compPicksFirst) {
+        let match = pickMatch(compHand[0]);
+        best = (match && blockHigherPair()) ? blockHigherPair() : (match || pickSuit(compHand[0]) || pickStraight(compHand[0]) || pickHighestWithMatches() || pickHighest());
+      } else {
+        best = pickMatch(compHand[0]) || pickSuit(compHand[0]) || pickStraight(compHand[0]) || pickHighestWithMatches() || pickHighest();
+      }
+    } else if (round === 3) {
+      best = compPicksFirst 
+        ? (blockHigherPair() || upgradePriority() || pickSuit(compHand[0]) || pickStraight(compHand[0]) || pickHighest())
+        : (upgradePriority() || pickSuit(compHand[0]) || pickStraight(compHand[0]) || pickHighest());
+    } else {
+      best = compPicksFirst ? (blockHigherPair() || pickHighest()) : pickHighest();
+    }
+
+    return best || availableCards[0];
+  }
+
+  // --- UI Render Functions ---
+  function renderCard(card, onClick = null) {
+    let div = document.createElement('div');
+    let isRed = card.suit === 'hearts' || card.suit === 'diamonds';
+    div.className = `card ${isRed ? 'red' : 'black'} ${onClick ? 'selectable' : ''}`;
+    
+    let valStr = valueNames[card.value] || card.value;
+    let symbol = suitSymbols[card.suit];
+
+    div.innerHTML = `
+      <div class="card-corner">${valStr}<br>${symbol}</div>
+      <div class="card-center">${symbol}</div>
+      <div class="card-corner" style="transform: rotate(180deg);">${valStr}<br>${symbol}</div>
+    `;
+
+    if (onClick) div.onclick = onClick;
+    return div;
+  }
+
+  function updateUI() {
+    document.getElementById('round-title').innerText = `Round ${roundNum} of 5`;
+    
+    let p1Container = document.getElementById('p1-hand');
+    let p2Container = document.getElementById('p2-hand');
+    let poolContainer = document.getElementById('card-pool');
+
+    p1Container.innerHTML = '';
+    p2Container.innerHTML = '';
+    poolContainer.innerHTML = '';
+
+    p1Hand.forEach(c => p1Container.appendChild(renderCard(c)));
+    p2Hand.forEach(c => p2Container.appendChild(renderCard(c)));
+
+    if (isSinglePlayer) {
+      document.getElementById('p2-label').innerText = "Computer:";
+      document.getElementById('instruction').innerText = "Pick a card from available deck";
+    } else {
+      document.getElementById('p2-label').innerText = "Player 2:";
+      document.getElementById('instruction').innerText = `Player ${currentTurn}'s turn to pick`;
+    }
+
+    currentPool.forEach((card, idx) => {
+      poolContainer.appendChild(renderCard(card, () => selectCard(idx)));
+    });
+  }
+
+  // --- Game Mechanics ---
   function createDeck() {
-    deck = [];
-    for (let s of suits) {
-      for (let v of values) {
-        deck.push({ suit: s, value: v, isRed: s === '♥' || s === '♦' });
+    let d = [];
+    for (let v = 2; v <= 14; v++) {
+      for (let s of suits) {
+        d.push({ value: v, suit: s });
       }
     }
-    // Shuffle
-    for (let i = deck.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [deck[i], deck[j]] = [deck[j], deck[i]];
-    }
+    return d.sort(() => Math.random() - 0.5);
   }
 
-  function getCardLabel(value) {
-    if (value <= 10) return value.toString();
-    if (value === 11) return 'J';
-    if (value === 12) return 'Q';
-    if (value === 13) return 'K';
-    if (value === 14) return 'A';
+  function startSinglePlayer() {
+    isSinglePlayer = true;
+    playerStarts = Math.random() < 0.5;
+    initGame();
   }
 
-  function renderCard(card, isHidden = false) {
-    const el = document.createElement('div');
-    if (isHidden) {
-      el.className = 'card back';
-      return el;
-    }
-    el.className = `card ${card.isRed ? 'red' : ''}`;
-    const label = getCardLabel(card.value);
-    el.innerHTML = `
-      <div>${label}</div>
-      <div style="text-align: center; font-size: 1.4rem;">${card.suit}</div>
-      <div style="text-align: right;">${label}</div>
-    `;
-    return el;
+  function startTwoPlayer() {
+    isSinglePlayer = false;
+    initialTurn = Math.random() < 0.5 ? 1 : 2;
+    currentTurn = initialTurn;
+    initGame();
   }
 
-  function showMenu() {
-    document.getElementById('menu-overlay').style.display = 'flex';
-  }
-
-  function startGame(mode) {
-    gameMode = mode;
-    p1Score = 0;
-    p2Score = 0;
-    document.getElementById('p1-score').innerText = '0';
-    document.getElementById('p2-score').innerText = '0';
-    document.getElementById('p2-name').innerText = mode === 'single' ? 'Computer' : 'Player 2';
-    document.getElementById('p2-score-label').childNodes[0].nodeValue = (mode === 'single' ? 'Computer: ' : 'Player 2: ');
-    
-    document.getElementById('menu-overlay').style.display = 'none';
-
-    // 50/50 Chance for starting player in both Single Player and Two Player modes
-    currentPlayer = Math.random() < 0.5 ? 1 : 2;
-
-    const startPlayerName = gameMode === 'single' && currentPlayer === 2 ? 'Computer' : `Player ${currentPlayer}`;
-    updateStatus(`${startPlayerName} won the toss and goes first!`);
-
+  function initGame() {
+    deck = createDeck();
+    remainingCards = [...deck];
+    p1Hand = []; p2Hand = [];
+    roundNum = 1;
+    hideAllViews();
+    document.getElementById('view-game').style.display = 'block';
     startRound();
   }
 
   function startRound() {
-    roundsPlayed = 0;
-    p1Played = null;
-    p2Played = null;
-    document.getElementById('p1-played-card').innerHTML = '';
-    document.getElementById('p2-played-card').innerHTML = '';
-
-    createDeck();
-    p1Hand = deck.splice(0, 5);
-    p2Hand = deck.splice(0, 5);
-
-    renderHands();
-
-    if (gameMode === 'single' && currentPlayer === 2) {
-      setTimeout(cpuTurn, 1000);
+    if (roundNum > 5) {
+      endGame();
+      return;
     }
-  }
 
-  function updateStatus(msg) {
-    document.getElementById('status-display').innerText = msg;
-  }
-
-  function renderHands() {
-    const p1Row = document.getElementById('p1-hand');
-    const p2Row = document.getElementById('p2-hand');
-    p1Row.innerHTML = '';
-    p2Row.innerHTML = '';
-
-    document.getElementById('p1-area').classList.toggle('active', currentPlayer === 1);
-    document.getElementById('p2-area').classList.toggle('active', currentPlayer === 2);
-
-    // Player 1 Hand
-    p1Hand.forEach((card, index) => {
-      const cardEl = renderCard(card);
-      if (currentPlayer === 1) {
-        cardEl.onclick = () => playCard(1, index);
-      } else {
-        cardEl.classList.add('disabled');
-      }
-      p1Row.appendChild(cardEl);
+    currentPool = deck.splice(0, 5);
+    // Remove drawn cards from remaining tracking
+    currentPool.forEach(cp => {
+      let idx = remainingCards.findIndex(rc => rc.value === cp.value && rc.suit === cp.suit);
+      if (idx !== -1) remainingCards.splice(idx, 1);
     });
 
-    // Player 2 Hand
-    p2Hand.forEach((card, index) => {
-      if (gameMode === 'two') {
-        const cardEl = renderCard(card, false); // Turn off face-down for local shared device if preferred
-        if (currentPlayer === 2) {
-          cardEl.onclick = () => playCard(2, index);
-        } else {
-          cardEl.classList.add('disabled');
-        }
-        p2Row.appendChild(cardEl);
+    if (isSinglePlayer) {
+      let compPicksFirst = (roundNum <= 3 && !playerStarts) || (roundNum > 3 && playerStarts);
+      if (compPicksFirst) {
+        let compChoice = computerPickCard(p2Hand, p1Hand, currentPool, roundNum, true);
+        p2Hand.push(compChoice);
+        currentPool = currentPool.filter(c => c !== compChoice);
+      }
+    } else {
+      if (roundNum === 4 || roundNum === 5) {
+        currentTurn = initialTurn === 1 ? 2 : 1;
       } else {
-        // CPU hand stays hidden
-        const cardEl = renderCard(card, true);
-        p2Row.appendChild(cardEl);
-      }
-    });
-  }
-
-  function playCard(player, index) {
-    if (player !== currentPlayer) return;
-
-    if (player === 1) {
-      p1Played = p1Hand.splice(index, 1)[0];
-      document.getElementById('p1-played-card').innerHTML = '';
-      document.getElementById('p1-played-card').appendChild(renderCard(p1Played));
-    } else {
-      p2Played = p2Hand.splice(index, 1)[0];
-      document.getElementById('p2-played-card').innerHTML = '';
-      document.getElementById('p2-played-card').appendChild(renderCard(p2Played));
-    }
-
-    if (p1Played && p2Played) {
-      resolveTurn();
-    } else {
-      currentPlayer = currentPlayer === 1 ? 2 : 1;
-      const nextName = gameMode === 'single' && currentPlayer === 2 ? 'Computer' : `Player ${currentPlayer}`;
-      updateStatus(`${nextName}'s turn to play.`);
-      renderHands();
-
-      if (gameMode === 'single' && currentPlayer === 2) {
-        setTimeout(cpuTurn, 800);
+        currentTurn = initialTurn;
       }
     }
+    updateUI();
   }
 
-  function cpuTurn() {
-    if (p2Hand.length === 0) return;
-    const randomIndex = Math.floor(Math.random() * p2Hand.length);
-    playCard(2, randomIndex);
-  }
+  function selectCard(index) {
+    let chosen = currentPool.splice(index, 1)[0];
 
-  function resolveTurn() {
-    renderHands();
-    roundsPlayed++;
-
-    let resultText = '';
-    if (p1Played.value > p2Played.value) {
-      p1Score++;
-      currentPlayer = 1;
-      resultText = 'Player 1 wins the duel!';
-    } else if (p2Played.value > p1Played.value) {
-      p2Score++;
-      currentPlayer = 2;
-      resultText = (gameMode === 'single' ? 'Computer' : 'Player 2') + ' wins the duel!';
-    } else {
-      resultText = 'Tie! No points awarded.';
-    }
-
-    document.getElementById('p1-score').innerText = p1Score;
-    document.getElementById('p2-score').innerText = p2Score;
-
-    if (roundsPlayed >= 5) {
-      let winnerText = '';
-      if (p1Score > p2Score) winnerText = 'Game Over: Player 1 Wins!';
-      else if (p2Score > p1Score) winnerText = 'Game Over: ' + (gameMode === 'single' ? 'Computer' : 'Player 2') + ' Wins!';
-      else winnerText = 'Game Over: It\'s a Draw!';
-
-      updateStatus(`${resultText} ${winnerText}`);
-      setTimeout(() => {
-        if (confirm(`${winnerText}\nPlay another round?`)) {
-          startRound();
-        } else {
-          showMenu();
-        }
-      }, 1000);
-    } else {
-      const leadName = gameMode === 'single' && currentPlayer === 2 ? 'Computer' : `Player ${currentPlayer}`;
-      updateStatus(`${resultText} ${leadName} plays first next duel.`);
+    if (isSinglePlayer) {
+      p1Hand.push(chosen);
+      let compPicksFirst = (roundNum <= 3 && !playerStarts) || (roundNum > 3 && playerStarts);
       
-      setTimeout(() => {
-        p1Played = null;
-        p2Played = null;
-        document.getElementById('p1-played-card').innerHTML = '';
-        document.getElementById('p2-played-card').innerHTML = '';
-        renderHands();
+      if (!compPicksFirst && currentPool.length > 0) {
+        let compChoice = computerPickCard(p2Hand, p1Hand, currentPool, roundNum, false);
+        p2Hand.push(compChoice);
+      }
+      roundNum++;
+      startRound();
+    } else {
+      if (currentTurn === 1) {
+        p1Hand.push(chosen);
+        currentTurn = 2;
+      } else {
+        p2Hand.push(chosen);
+        currentTurn = 1;
+      }
 
-        if (gameMode === 'single' && currentPlayer === 2) {
-          setTimeout(cpuTurn, 800);
-        }
-      }, 1200);
+      if (p1Hand.length === roundNum && p2Hand.length === roundNum) {
+        roundNum++;
+        startRound();
+      } else {
+        updateUI();
+      }
     }
   }
 
-  // Open menu on launch
-  showMenu();
+  function endGame() {
+    hideAllViews();
+    document.getElementById('view-results').style.display = 'block';
+
+    let eval1 = evaluateHand(p1Hand);
+    let eval2 = evaluateHand(p2Hand);
+
+    let resP1 = document.getElementById('res-p1-hand');
+    let resP2 = document.getElementById('res-p2-hand');
+    resP1.innerHTML = ''; resP2.innerHTML = '';
+
+    p1Hand.forEach(c => resP1.appendChild(renderCard(c)));
+    p2Hand.forEach(c => resP2.appendChild(renderCard(c)));
+
+    let p1Name = isSinglePlayer ? "Player 1" : "Player 1";
+    let p2Name = isSinglePlayer ? "Computer" : "Player 2";
+
+    document.getElementById('res-p1-label').innerText = `${p1Name}:`;
+    document.getElementById('res-p2-label').innerText = `${p2Name}:`;
+
+    document.getElementById('p1-hand-type').innerText = getSpecificHandName(eval1, p1Hand);
+    document.getElementById('p2-hand-type').innerText = getSpecificHandName(eval2, p2Hand);
+
+    let winnerText = "";
+    if (eval1.rank > eval2.rank) {
+      winnerText = `${p1Name} Wins!`;
+    } else if (eval2.rank > eval1.rank) {
+      winnerText = `${p2Name} Wins!`;
+    } else {
+      // Tie-breaker
+      let tieWinner = 0;
+      for (let i = 0; i < eval1.values.length; i++) {
+        if (eval1.values[i] > eval2.values[i]) { tieWinner = 1; break; }
+        if (eval2.values[i] > eval1.values[i]) { tieWinner = 2; break; }
+      }
+      if (tieWinner === 1) winnerText = `${p1Name} Wins!`;
+      else if (tieWinner === 2) winnerText = `${p2Name} Wins!`;
+      else winnerText = "It's a Tie!";
+    }
+
+    document.getElementById('winner-announcement').innerText = winnerText;
+  }
+
+  function restartGame() {
+    if (isSinglePlayer) startSinglePlayer();
+    else startTwoPlayer();
+  }
 </script>
 </body>
 </html>
