@@ -13,9 +13,9 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: flex-start;
+      justify-content: center;
       min-height: 100vh;
-      padding: 20px 15px;
+      padding: 15px;
     }
     #game-container {
       width: 100%;
@@ -106,6 +106,10 @@
       cursor: default;
       opacity: 0.8;
     }
+    .card.selected {
+      border: 3px solid #f2e9e1;
+      transform: translateY(-8px);
+    }
     .controls {
       display: flex;
       justify-content: center;
@@ -126,36 +130,6 @@
     .btn:hover { background-color: #778da9; }
     .btn-primary { background-color: #e0e1dd; color: #0d1b2a; }
     .btn-primary:hover { background-color: #ffffff; }
-
-    /* Rules Section */
-    .rules-section {
-      background-color: #1b263b;
-      border-radius: 8px;
-      padding: 20px;
-      border: 1px solid #415a77;
-    }
-    .rules-section h2 {
-      font-size: 1.4rem;
-      color: #e0e1dd;
-      margin-bottom: 10px;
-      border-bottom: 1px solid #415a77;
-      padding-bottom: 6px;
-    }
-    .rules-section p {
-      color: #e0e1dd;
-      margin-bottom: 12px;
-      line-height: 1.5;
-    }
-    .rules-section ul {
-      margin-left: 20px;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      line-height: 1.4;
-    }
-    .rules-section strong {
-      color: #778da9;
-    }
 
     /* Overlay Screens */
     .overlay {
@@ -211,21 +185,6 @@
   <div class="controls">
     <button class="btn" onclick="showMenu()">Main Menu</button>
   </div>
-
-  <!-- In-Page Rules Section -->
-  <div class="rules-section">
-    <h2>How to Play</h2>
-    <p>
-      Five Card Duel is a tactical 5-round card game where players compete for the highest score using single-card matchups.
-    </p>
-    <ul>
-      <li><strong>50/50 Coin Flip:</strong> A random flip determines who leads the first card at the start of every match.</li>
-      <li><strong>Card Ranks:</strong> Standard rank order applies: <strong>Ace (High) &gt; King &gt; Queen &gt; Jack &gt; 10 ... 2 (Low)</strong>. Suits do not affect card strength.</li>
-      <li><strong>Winning Duels:</strong> The higher rank played earns 1 point. In the event of a tie, no points are awarded.</li>
-      <li><strong>Turn Control:</strong> The winner of each duel earns the right to lead the next card. In ties, turn order remains unchanged.</li>
-      <li><strong>Winning the Match:</strong> The player with the highest total score after 5 rounds wins the game.</li>
-    </ul>
-  </div>
 </div>
 
 <!-- Main Menu Overlay -->
@@ -248,8 +207,8 @@
   let p2Played = null;
   let p1Score = 0;
   let p2Score = 0;
-  let gameMode = 'single';
-  let currentPlayer = 1;
+  let gameMode = 'single'; // 'single' or 'two'
+  let currentPlayer = 1; // 1 or 2
   let roundsPlayed = 0;
 
   function createDeck() {
@@ -259,6 +218,7 @@
         deck.push({ suit: s, value: v, isRed: s === '♥' || s === '♦' });
       }
     }
+    // Shuffle
     for (let i = deck.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       [deck[i], deck[j]] = [deck[j], deck[i]];
@@ -304,6 +264,7 @@
     
     document.getElementById('menu-overlay').style.display = 'none';
 
+    // 50/50 Chance for starting player in both Single Player and Two Player modes
     currentPlayer = Math.random() < 0.5 ? 1 : 2;
 
     const startPlayerName = gameMode === 'single' && currentPlayer === 2 ? 'Computer' : `Player ${currentPlayer}`;
@@ -343,6 +304,7 @@
     document.getElementById('p1-area').classList.toggle('active', currentPlayer === 1);
     document.getElementById('p2-area').classList.toggle('active', currentPlayer === 2);
 
+    // Player 1 Hand
     p1Hand.forEach((card, index) => {
       const cardEl = renderCard(card);
       if (currentPlayer === 1) {
@@ -353,9 +315,10 @@
       p1Row.appendChild(cardEl);
     });
 
+    // Player 2 Hand
     p2Hand.forEach((card, index) => {
       if (gameMode === 'two') {
-        const cardEl = renderCard(card, false);
+        const cardEl = renderCard(card, false); // Turn off face-down for local shared device if preferred
         if (currentPlayer === 2) {
           cardEl.onclick = () => playCard(2, index);
         } else {
@@ -363,6 +326,7 @@
         }
         p2Row.appendChild(cardEl);
       } else {
+        // CPU hand stays hidden
         const cardEl = renderCard(card, true);
         p2Row.appendChild(cardEl);
       }
@@ -454,6 +418,7 @@
     }
   }
 
+  // Open menu on launch
   showMenu();
 </script>
 </body>
