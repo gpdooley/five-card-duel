@@ -13,9 +13,9 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
+      justify-content: flex-start;
       min-height: 100vh;
-      padding: 15px;
+      padding: 20px 15px;
     }
     #game-container {
       width: 100%;
@@ -127,6 +127,36 @@
     .btn-primary { background-color: #e0e1dd; color: #0d1b2a; }
     .btn-primary:hover { background-color: #ffffff; }
 
+    /* Rules Container Box */
+    .rules-section {
+      background-color: #1b263b;
+      border-radius: 8px;
+      padding: 20px;
+      border: 1px solid #415a77;
+    }
+    .rules-section h2 {
+      font-size: 1.4rem;
+      color: #e0e1dd;
+      margin-bottom: 10px;
+      border-bottom: 1px solid #415a77;
+      padding-bottom: 6px;
+    }
+    .rules-section p {
+      color: #e0e1dd;
+      margin-bottom: 12px;
+      line-height: 1.5;
+    }
+    .rules-section ul {
+      margin-left: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      line-height: 1.4;
+    }
+    .rules-section strong {
+      color: #778da9;
+    }
+
     /* Overlay Screens */
     .overlay {
       position: fixed;
@@ -138,40 +168,8 @@
       align-items: center;
       gap: 20px;
       z-index: 100;
-      padding: 20px;
     }
     .overlay h2 { font-size: 2.5rem; }
-
-    /* Rules Modal Box */
-    .rules-card {
-      background-color: #1b263b;
-      border-radius: 10px;
-      padding: 24px;
-      max-width: 600px;
-      width: 100%;
-      box-shadow: 0 6px 20px rgba(0,0,0,0.5);
-      text-align: left;
-      line-height: 1.6;
-    }
-    .rules-card h3 {
-      color: #e0e1dd;
-      margin-bottom: 12px;
-      border-bottom: 1px solid #415a77;
-      padding-bottom: 6px;
-    }
-    .rules-list {
-      margin-left: 20px;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-    .rules-list li {
-      color: #e0e1dd;
-    }
-    .rules-highlight {
-      color: #778da9;
-      font-weight: bold;
-    }
   </style>
 </head>
 <body>
@@ -211,54 +209,32 @@
   </div>
 
   <div class="controls">
-    <button class="btn" onclick="showRules()">How to Play</button>
     <button class="btn" onclick="showMenu()">Main Menu</button>
+  </div>
+
+  <!-- In-Page Rules Section -->
+  <div class="rules-section">
+    <h2>How to Play</h2>
+    <p>
+      Five Card Duel is a tactical 5-round card game where players compete for the highest score using single-card matchups.
+    </p>
+    <ul>
+      <li><strong>50/50 Coin Flip:</strong> A random flip determines who leads the first card at the start of every match.</li>
+      <li><strong>Card Ranks:</strong> Standard rank order applies: <strong>Ace (High) &gt; King &gt; Queen &gt; Jack &gt; 10 ... 2 (Low)</strong>. Suits do not affect card strength.</li>
+      <li><strong>Winning Duels:</strong> The higher rank played earns 1 point. In the event of a tie, no points are awarded.</li>
+      <li><strong>Turn Control:</strong> The winner of each duel earns the right to lead the next card. In ties, turn order remains unchanged.</li>
+      <li><strong>Winning the Match:</strong> The player with the highest total score after 5 rounds wins the game.</li>
+    </ul>
   </div>
 </div>
 
 <!-- Main Menu Overlay -->
 <div id="menu-overlay" class="overlay">
   <h2>Five Card Duel</h2>
-  <div style="display: flex; gap: 15px; flex-wrap: wrap; justify-content: center;">
+  <div style="display: flex; gap: 15px;">
     <button class="btn btn-primary" onclick="startGame('single')">Single Player (vs CPU)</button>
     <button class="btn btn-primary" onclick="startGame('two')">Two Player (Local)</button>
-    <button class="btn" onclick="showRules()">How to Play</button>
   </div>
-</div>
-
-<!-- Rules Overlay -->
-<div id="rules-overlay" class="overlay" style="display: none;">
-  <h2>Rules of the Game</h2>
-  <div class="rules-card">
-    <h3>Overview & Objective</h3>
-    <p style="margin-bottom: 14px;">
-      Two players clash in a fast-paced 5-round battle of card ranks. Score the highest points over 5 duels to claim victory.
-    </p>
-
-    <h3>Game Flow</h3>
-    <ol class="rules-list">
-      <li>
-        <span class="rules-highlight">The Opening Toss:</span> A random 50/50 coin flip decides who plays first in round 1.
-      </li>
-      <li>
-        <span class="rules-highlight">Dealing Hands:</span> Both players receive a hand of 5 cards from a standard deck.
-      </li>
-      <li>
-        <span class="rules-highlight">Playing Duels:</span> Take turns playing 1 card face up into the battle center.
-      </li>
-      <li>
-        <span class="rules-highlight">Scoring Points:</span> High card wins the duel and earns 1 point. Standard rank hierarchy applies: 
-        <strong>A (High) &gt; K &gt; Q &gt; J &gt; 10 &gt; ... &gt; 2 (Low)</strong>. Suits are disregarded.
-      </li>
-      <li>
-        <span class="rules-highlight">Next Turn Lead:</span> Whoever wins the duel leads the first card in the next duel. If a duel ends in a tie, no points are awarded and the turn order remains unchanged.
-      </li>
-      <li>
-        <span class="rules-highlight">Winning the Match:</span> After all 5 rounds are played, the player with the most points wins!
-      </li>
-    </ol>
-  </div>
-  <button class="btn btn-primary" onclick="hideRules()">Back to Game</button>
 </div>
 
 <script>
@@ -315,16 +291,7 @@
   }
 
   function showMenu() {
-    hideRules();
     document.getElementById('menu-overlay').style.display = 'flex';
-  }
-
-  function showRules() {
-    document.getElementById('rules-overlay').style.display = 'flex';
-  }
-
-  function hideRules() {
-    document.getElementById('rules-overlay').style.display = 'none';
   }
 
   function startGame(mode) {
@@ -337,7 +304,6 @@
     document.getElementById('p2-score-label').childNodes[0].nodeValue = (mode === 'single' ? 'Computer: ' : 'Player 2: ');
     
     document.getElementById('menu-overlay').style.display = 'none';
-    hideRules();
 
     // 50/50 Chance for starting player in both Single Player and Two Player modes
     currentPlayer = Math.random() < 0.5 ? 1 : 2;
