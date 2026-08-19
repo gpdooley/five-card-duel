@@ -13,9 +13,9 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: flex-start;
+      justify-content: center;
       min-height: 100vh;
-      padding: 20px 15px;
+      padding: 15px;
     }
     #game-container {
       width: 100%;
@@ -131,36 +131,6 @@
     .btn-primary { background-color: #e0e1dd; color: #0d1b2a; }
     .btn-primary:hover { background-color: #ffffff; }
 
-    /* Rules Section */
-    .rules-section {
-      background-color: #1b263b;
-      border-radius: 8px;
-      padding: 20px;
-      border: 1px solid #415a77;
-    }
-    .rules-section h2 {
-      font-size: 1.4rem;
-      color: #e0e1dd;
-      margin-bottom: 10px;
-      border-bottom: 1px solid #415a77;
-      padding-bottom: 6px;
-    }
-    .rules-section p {
-      color: #e0e1dd;
-      margin-bottom: 12px;
-      line-height: 1.5;
-    }
-    .rules-section ul {
-      margin-left: 20px;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      line-height: 1.4;
-    }
-    .rules-section strong {
-      color: #778da9;
-    }
-
     /* Overlay Screens */
     .overlay {
       position: fixed;
@@ -214,21 +184,6 @@
 
   <div class="controls">
     <button class="btn" onclick="showMenu()">Main Menu</button>
-  </div>
-
-  <!-- Rules Section -->
-  <div class="rules-section">
-    <h2>How to Play</h2>
-    <p>
-      Five Card Duel is a head-to-head tactical card game played over 5 individual duels.
-    </p>
-    <ul>
-      <li><strong>Opening Coin Flip:</strong> At the start of a match, a 50/50 toss randomly determines which player leads first.</li>
-      <li><strong>Card Hierarchy:</strong> Standard ranks apply: <strong>Ace (High) &gt; King &gt; Queen &gt; Jack &gt; 10 ... 2 (Low)</strong>. Suit does not impact card strength.</li>
-      <li><strong>Scoring Duels:</strong> The player with the higher value card wins the duel and earns 1 point. Equal ranks result in a tie (0 points awarded).</li>
-      <li><strong>Maintaining Momentum:</strong> The winner of a duel leads the next card. In a tie, the lead turn stays with the previous leader.</li>
-      <li><strong>Match Victory:</strong> After all 5 cards are played, the player with the highest total score wins the game.</li>
-    </ul>
   </div>
 </div>
 
