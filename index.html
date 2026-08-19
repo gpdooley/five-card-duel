@@ -144,6 +144,37 @@
       z-index: 100;
     }
     .overlay h2 { font-size: 2.5rem; }
+
+    /* Rules Modal Box */
+    .rules-card {
+      background-color: #1b263b;
+      border: 2px solid #415a77;
+      border-radius: 12px;
+      padding: 25px;
+      max-width: 600px;
+      width: 90%;
+      color: #e0e1dd;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+    .rules-card h3 {
+      font-size: 1.8rem;
+      color: #e0e1dd;
+      border-bottom: 1px solid #415a77;
+      padding-bottom: 8px;
+      text-align: center;
+    }
+    .rules-card ul {
+      list-style-type: square;
+      padding-left: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      font-size: 1rem;
+      line-height: 1.4;
+    }
   </style>
 </head>
 <body>
@@ -184,15 +215,37 @@
 
   <div class="controls">
     <button class="btn" onclick="showMenu()">Main Menu</button>
+    <button class="btn" onclick="showRules()">Rules</button>
   </div>
 </div>
 
 <!-- Main Menu Overlay -->
 <div id="menu-overlay" class="overlay">
   <h2>Five Card Duel</h2>
-  <div style="display: flex; gap: 15px;">
+  <div style="display: flex; gap: 15px; flex-wrap: wrap; justify-content: center;">
     <button class="btn btn-primary" onclick="startGame('single')">Single Player (vs CPU)</button>
     <button class="btn btn-primary" onclick="startGame('two')">Two Player (Local)</button>
+    <button class="btn" onclick="showRules()">How to Play</button>
+  </div>
+</div>
+
+<!-- Rules Overlay -->
+<div id="rules-overlay" class="overlay" style="display: none;">
+  <div class="rules-card">
+    <h3>Rules & How to Play</h3>
+    <ul>
+      <li><strong>Objective:</strong> Win the most duels across 5 rounds using tactical card plays.</li>
+      <li><strong>The Deal:</strong> Both players are dealt 5 random cards from a standard 52-card deck at the start of the match.</li>
+      <li><strong>Starting Turn:</strong> A coin flip determines who plays first in Round 1.</li>
+      <li><strong>Duels:</strong> Players take turns playing 1 card to the battle area. Once both cards are down, the higher card wins 1 point.</li>
+      <li><strong>Card Ranks:</strong> High to low: <strong>Ace (14) &gt; King (13) &gt; Queen (12) &gt; Jack (11) &gt; 10 through 2</strong>. Suits do not affect rank.</li>
+      <li><strong>Ties:</strong> Matching card values result in a push—no points are awarded to either player.</li>
+      <li><strong>Tempo Control:</strong> The winner of each duel must play first in the following round!</li>
+      <li><strong>Victory:</strong> Whoever has the highest score after all 5 cards are played wins the match.</li>
+    </ul>
+    <div style="text-align: center; margin-top: 10px;">
+      <button class="btn btn-primary" onclick="hideRules()">Got It</button>
+    </div>
   </div>
 </div>
 
@@ -251,6 +304,14 @@
 
   function showMenu() {
     document.getElementById('menu-overlay').style.display = 'flex';
+  }
+
+  function showRules() {
+    document.getElementById('rules-overlay').style.display = 'flex';
+  }
+
+  function hideRules() {
+    document.getElementById('rules-overlay').style.display = 'none';
   }
 
   function startGame(mode) {
